@@ -1,9 +1,10 @@
 const {buildDB} = require('./db/populateDataBase')
 const express = require('express')
-const {Cheese} = require('./models')
+const {Cheese,Board, User} = require('./models')
 const app = express()
 buildDB()
 
+app.use(express.json())
 
 app.get('/cheeses/:cheese', async (req, res) => {
     
@@ -21,7 +22,6 @@ app.get('/cheeses/:cheese', async (req, res) => {
     }
     res.send(payload)
 })
-
 
 app.get('/cheeses', async (req, res) => {
 
@@ -43,6 +43,28 @@ app.get('/cheeses', async (req, res) => {
     }
 })
 
+app.post('/boards', async (req, res) => {
+    //add incoming board to our database
+    //send something back
+    await Board.create(req.body)   
+    res.sendStatus(200)
+})
+
+app.put('/boards', async (req, res) => {
+    console.log(req.body)
+    // let foundBoard = await Board.findByPk(req.body.id)
+    // await foundBoard.update({rating: req.body.rating})
+
+
+    await Board.update({
+        rating: req.body.rating,
+      }, {
+        where: { id:req.body.id },
+      })
+
+    
+    res.sendStatus(200)
+})
 
 
 app.listen(3000, ()=>{
